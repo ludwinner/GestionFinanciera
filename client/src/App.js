@@ -21,10 +21,11 @@ function App() {
       if (preteam.indexOf(team) === index){
           const newTeams = {
             "tipo": team,
-            "sups": [] 
+            "sups": [],
+            "key": "team_"+team
           }
 
-          newTeams.sups.push(Sups(team,z))
+          Sups(team,z).forEach(e=>newTeams.sups.push(e))
           preTeam.push(newTeams)
           return newTeams
       }
@@ -43,9 +44,11 @@ function App() {
         if (sups!== undefined) {
           const newSups = {
             "name":sups,
-            "vend":[]
+            "vend":[],
+            "key": "Sup_"+sups
           }
-          newSups.vend.push(Vendedor(sups,z))
+          Vendedor(sups,z).forEach(e=>newSups.vend.push(e))
+
           preSups.push(newSups)
         }
       }
@@ -58,6 +61,7 @@ function App() {
         delete ven.NomSucursal
         delete ven.NombreZona
         delete ven.EsMiniEmprendedor
+        ven.key= ven.CodVendedor
         return ven
       }
     })
@@ -72,9 +76,9 @@ function App() {
         const newZones = {
           "name":zone,
           "team":[],
-          'key': zone
+          'key': "Zone_"+zone
         }
-        newZones.team.push(Team(zone))
+        Team(zone).forEach(e=>newZones.team.push(e))      
         setSolicitud(oldSolicitud => [...oldSolicitud, newZones]);
       }
     })
@@ -84,55 +88,92 @@ function App() {
       <button onClick={Solicitud}>coso</button>
       <hr />
       <div>
-        <table class="default">
-          <tr>
-            <td colspan='10'></td>
-            <td colspan='12'>CLASIFICACIONES PENDIENTES</td>
-            <td colspan='4'>MESES ANTERIORES</td>
-            <td colspan='1'></td>
-          </tr>
-          <tr>
-            <td colspan='3'>Vendedor</td>
-            <td colspan='1'>Fecha Alta</td>
-            <td colspan='1'>Fecha Baja</td>
-            <td colspan='1'>Ingresadas</td>
-            <td colspan='1'>Ventas MP</td>
-            <td colspan='1'>Cruce Scoring</td>
-            <td colspan='1'>Objetivo</td>
-            <td colspan='1'>Producción</td>
+        <table>
+          <thead>
+            <tr>
+              <td colSpan='10'></td>
+              <td colSpan='12'>CLASIFICACIONES PENDIENTES</td>
+              <td colSpan='4'>MESES ANTERIORES</td>
+              <td colSpan='1'></td>
+            </tr>
+            <tr>
+              <td colSpan='3'>Vendedor</td>
+              <td colSpan='1'>Fecha Alta</td>
+              <td colSpan='1'>Fecha Baja</td>
+              <td colSpan='1'>Ingresadas</td>
+              <td colSpan='1'>Ventas MP</td>
+              <td colSpan='1'>Cruce Scoring</td>
+              <td colSpan='1'>Objetivo</td>
+              <td colSpan='1'>Producción</td>
 
-            <td colspan='1'>2</td>
-            <td colspan='1'>4</td> 
-            <td colspan='1'>5</td>
-            <td colspan='1'>6</td>
-            <td colspan='1'>7</td>
-            <td colspan='1'>SUBTOTAL</td>	
-            <td colspan='1'>3</td>
-            <td colspan='1'>8</td>
-            <td colspan='1'>9</td>
-            <td colspan='1'>SUBTOTAL</td>	
-            <td colspan='1'>Anulada 3 + 7</td>
-            <td colspan='1'>Anulada Rechazada</td>
+              <td colSpan='1'>2</td>
+              <td colSpan='1'>4</td> 
+              <td colSpan='1'>5</td>
+              <td colSpan='1'>6</td>
+              <td colSpan='1'>7</td>
+              <td colSpan='1'>SUBTOTAL</td>	
+              <td colSpan='1'>3</td>
+              <td colSpan='1'>8</td>
+              <td colSpan='1'>9</td>
+              <td colSpan='1'>SUBTOTAL</td>	
+              <td colSpan='1'>Anulada 3 + 7</td>
+              <td colSpan='1'>Anulada Rechazada</td>
 
-            <td colspan='1'>-1</td>
-            <td colspan='1'>-2</td>
-            <td colspan='1'>-3</td>
-            <td colspan='1'>PROM</td>	
-            <td colspan='1'>GB</td>
-          </tr>
+              <td colSpan='1'>-1</td>
+              <td colSpan='1'>-2</td>
+              <td colSpan='1'>-3</td>
+              <td colSpan='1'>PROM</td>	
+              <td colSpan='1'>GB</td>
+            </tr>
+          </thead>
           {
             solicitud?.length>0 ?
-            solicitud?.length>0 && solicitud?.map((e)=>{
+            solicitud?.length>0 && solicitud?.map((zona)=>{
               return (
-                <tr>
-              <td colspan='27'>{`${e.name}`}</td>
-        </tr>
+                <tbody>
+                  <tr>
+                    <td colSpan='10'>
+                    <ul>
+                      {
+                        zona?.team.length>0 && zona?.team.map((team)=>{
+                          return (
+                            <li key={`${team.key}`}>{`${team.tipo}`}
+                              <ul>
+                                {
+                                  team?.sups.length>0 && team?.sups.map((sups)=>{
+                                    return (
+                                      <li key={`${sups.key}`}>{`${sups.name}`}
+                                          <ul>
+                                          {
+                                            sups?.vend.length>0 && sups?.vend.map((vend)=>{
+                                              return (
+                                                <li colSpan='3' key={`${vend.key}`}>{`${vend.NomVendedor}`}
+                                                </li>
+                                                )
+                                            })
+                                          }
+                                          </ul>
+                                      </li>
+                                    )
+                                  })
+                                }
+                              </ul>
+                            </li>
+                          )
+                        })
+                      }
+                    </ul>
+                    </td>
+                  </tr>
+                </tbody>
               )
             }) 
             :
-            <tr>
-            <td colspan='27' rowspan='10'>SIN DATOS</td>
-        </tr>
+            <tbody>
+              <tr>
+                <td colSpan='27' rowSpan='10'>SIN DATOS</td>
+              </tr>
+            </tbody>
           }
         </table>
       </div>
